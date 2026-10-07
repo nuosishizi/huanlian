@@ -73,9 +73,9 @@ call "%CONDA_BAT%" run -p "%ENV_DIR%" python -c "import onnxruntime as ort; asse
 if errorlevel 1 goto :failed
 
 copy /y "%ROOT%start.bat" "%INSTALL_DIR%\Start-FaceFusion.bat" >nul
-powershell.exe -NoProfile -Command "$w=New-Object -ComObject WScript.Shell; $s=$w.CreateShortcut([Environment]::GetFolderPath('Desktop')+'\FaceFusion.lnk'); $s.TargetPath='%INSTALL_DIR%\Start-FaceFusion.bat'; $s.WorkingDirectory='%APP_DIR%'; $s.Save()"
+powershell.exe -NoProfile -Command "$w=New-Object -ComObject WScript.Shell; $d=[Environment]::GetFolderPath('Desktop'); $s=$w.CreateShortcut($d+'\FaceFusion.lnk'); $s.TargetPath='%INSTALL_DIR%\Start-FaceFusion.bat'; $s.WorkingDirectory='%APP_DIR%'; $s.Save(); $c=$w.CreateShortcut($d+'\FaceFusion Webcam.lnk'); $c.TargetPath='%INSTALL_DIR%\Start-FaceFusion.bat'; $c.Arguments='--ui-layouts webcam'; $c.WorkingDirectory='%APP_DIR%'; $c.Save()"
 echo.
-echo 安装完成。桌面已创建 FaceFusion 快捷方式。
+echo 安装完成。桌面已创建 FaceFusion 和 FaceFusion Webcam 两个快捷方式。
 pause
 exit /b 0
 
