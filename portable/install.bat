@@ -43,7 +43,7 @@ if not exist "%CONDA_BAT%" (
 if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
 if not exist "%ENV_DIR%\python.exe" (
   echo 正在创建 Python 3.12 环境...
-  call "%CONDA_BAT%" create -y -p "%ENV_DIR%" python=3.12 pip=25.0
+  call "%CONDA_BAT%" create -y -p "%ENV_DIR%" --override-channels -c conda-forge python=3.12 pip=25.0
   if errorlevel 1 goto :failed
 )
 
@@ -56,11 +56,11 @@ if not exist "%APP_DIR%\facefusion.py" (
 )
 
 echo 正在安装 CUDA 12.9 和 cuDNN 9.10 运行库...
-call "%CONDA_BAT%" install -y -p "%ENV_DIR%" nvidia/label/cuda-12.9.1::cuda-runtime nvidia/label/cudnn-9.10.0::cudnn
+call "%CONDA_BAT%" install -y -p "%ENV_DIR%" --override-channels -c conda-forge nvidia/label/cuda-12.9.1::cuda-runtime nvidia/label/cudnn-9.10.0::cudnn
 if errorlevel 1 goto :failed
 
 echo 正在安装 FFmpeg...
-call "%CONDA_BAT%" install -y -p "%ENV_DIR%" -c conda-forge ffmpeg
+call "%CONDA_BAT%" install -y -p "%ENV_DIR%" --override-channels -c conda-forge ffmpeg
 if errorlevel 1 goto :failed
 
 echo 正在安装 FaceFusion 与 NVIDIA CUDA 版 ONNX Runtime...
