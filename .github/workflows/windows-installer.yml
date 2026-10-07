@@ -1,0 +1,41 @@
+name: Windows NVIDIA Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'codex/**'
+    tags:
+      - 'installer-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Package lightweight installer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $stage = Join-Path $PWD 'FaceFusion-Windows-NVIDIA-Installer'
+          New-Item -ItemType Directory -Force $stage | Out-Null
+          Copy-Item portable\install.bat, portable\start.bat, portable\README.txt, LICENSE.md $stage
+          Compress-Archive -Path (Join-Path $stage '*') -DestinationPath FaceFusion-Windows-NVIDIA-Installer.zip -CompressionLevel Optimal
+          Get-Item FaceFusion-Windows-NVIDIA-Installer.zip | Format-List Name,Length
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FaceFusion-Windows-NVIDIA-Installer
+          path: FaceFusion-Windows-NVIDIA-Installer.zip
+          if-no-files-found: error
+          retention-days: 30
+      - name: Attach installer to release
+        if: startsWith(github.ref, 'refs/tags/installer-v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: gh release create "${{ github.ref_name }}" FaceFusion-Windows-NVIDIA-Installer.zip --title "FaceFusion Windows NVIDIA ${{ github.ref_name }}" --generate-notes
