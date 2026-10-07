@@ -64,8 +64,11 @@ call "%CONDA_BAT%" install -y -p "%ENV_DIR%" --override-channels -c conda-forge 
 if errorlevel 1 goto :failed
 
 echo 正在安装 FaceFusion 与 NVIDIA CUDA 版 ONNX Runtime...
+pushd "%APP_DIR%"
+if errorlevel 1 goto :failed
 call "%CONDA_BAT%" run -p "%ENV_DIR%" python "%APP_DIR%\install.py" cuda@12 --skip-conda
 if errorlevel 1 goto :failed
+popd
 call "%CONDA_BAT%" run -p "%ENV_DIR%" python -c "import onnxruntime as ort; assert 'CUDAExecutionProvider' in ort.get_available_providers(), ort.get_available_providers()"
 if errorlevel 1 goto :failed
 
